@@ -204,26 +204,26 @@ def main():
     while True:
         # Show menu options
         choice = buttonbox("What would you like to do?", "Shopping Cart",
-                           choices=["Add Item", "View Cart", "Remove Item", "Checkout", "Store Login", "Quit"])
+                           choices=["\u2795 Add Item", "\U0001F6D2 View Cart", "\u274C Remove Item", "\U0001F4B8 Checkout", "\U0001F3EA Store Login", "\U0001F6AE Quit"])
 
         """match choice:
             case "Add Item":
                 add_item(cart)"""
 
-        if choice == "Add Item":
+        if choice == "\u2795 Add Item":
             add_item(cart)
-        elif choice == "View Cart":
+        elif choice == "\U0001F6D2 View Cart":
             display_cart(cart, coupons_applied)
-        elif choice == "Remove Item":
+        elif choice == "\u274C Remove Item":
             display_cart(cart, coupons_applied)
             remove_item(cart)
-        elif choice == "Checkout":
+        elif choice == "\U0001F4B8 Checkout":
             if cart:
                 ask_for_coupon(cart, coupons_applied)
             display_cart(cart, coupons_applied)
             msgbox("Thank you for shopping with us!")
             break
-        elif choice == "Store Login":
+        elif choice == "\U0001F3EA Store Login":
             # Simple password check to allow admin access
             entered_password = passwordbox("Enter Store Password")
             if entered_password is None:
@@ -238,7 +238,7 @@ def main():
             else:
                 msgbox("Wrong password")
                 break
-        elif choice == "Quit" or choice is None:
+        elif choice == "\U0001F6AE Quit" or choice is None:
             break  # Exit program
 
 # Run the program
