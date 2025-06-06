@@ -72,6 +72,22 @@ def display_cart(cart, coupons_applied):
 
         msgbox(message)
 
+def display_cart_less10(cart):
+    if not cart:
+        msgbox("Your cart is empty.")
+        return
+    message = "Shopping Cart:\n\n"
+    total = 0
+    # Build a string showing each item, quantity, and cost
+    for item in cart:
+        item_total = item["price"] * item["quantity"]
+        total += item_total
+        message += f"{item['quantity']} x {item['item']} @ ${item['price']:.2f} = ${item_total:.2f}\n"
+        message += f"\nTotal: ${total:.2f}"
+        message += "\nThere are no available coupon codes for you"
+
+    msgbox(message)
+
 # Admin/store function to add a new item to the product catalog
 def add_item_to_dict(items):
     new_item = enterbox("Enter name of the new item")
@@ -115,6 +131,10 @@ def ask_for_coupon(cart, coupons_applied):
     :param cart: The current shopping cart
     :return: None
     """
+    total = sum(item["price"] * item["quantity"] for item in cart if "item" in item)
+    if total<0:
+        msgbox(f"Your cart total is ${total:.2f}. You need at least $10 to use a coupon.")
+
     coupon_code = enterbox("Enter your coupon code (or leave blank to skip):", "Apply Coupon")
     if not coupon_code:
         return  # User chose not to apply a coupon
@@ -131,7 +151,7 @@ def ask_for_coupon(cart, coupons_applied):
     coupons_applied.append(coupon_code)
 
     # Calculate the total price of items in the cart
-    total = sum(item["price"] * item["quantity"] for item in cart if "item" in item)
+
     if coupon["type"] == "percent":
         discount = total * coupon["value"]
         total -= discount
@@ -139,6 +159,8 @@ def ask_for_coupon(cart, coupons_applied):
     elif coupon["type"] == "dollar":
         total -= coupon["value"]
         msgbox(f"Applied {coupon_code}: ${coupon['value']:.2f} off! New total: ${total:.2f}")
+
+
     more_coupons = ynbox("Do you have more coupons to apply?", "More Coupons", choices=["Yes", "No"])
     if more_coupons:
         ask_for_coupon(cart, coupons_applied)
@@ -201,6 +223,7 @@ def admin_choice():
 def main():
     cart = []  # Start with an empty shopping cart
     coupons_applied = []  # List to store applied coupons
+    total=sum(item["price"] * item["quantity"] for item in cart if "item" in item)
     while True:
         # Show menu options
         choice = buttonbox("What would you like to do?", "Shopping Cart",
@@ -219,8 +242,12 @@ def main():
             remove_item(cart)
         elif choice == "\U0001F4B8 Checkout":
             if cart:
-                ask_for_coupon(cart, coupons_applied)
-            display_cart(cart, coupons_applied)
+                if total>10:
+                    ask_for_coupon(cart, coupons_applied)
+                    display_cart(cart,coupons_applied)
+                    continue
+                else:
+                    display_cart_less10(cart)
             msgbox("Thank you for shopping with us!")
             break
         elif choice == "\U0001F3EA Store Login":
