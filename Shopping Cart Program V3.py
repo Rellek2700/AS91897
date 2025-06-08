@@ -223,7 +223,7 @@ def admin_choice():
 def main():
     cart = []  # Start with an empty shopping cart
     coupons_applied = []  # List to store applied coupons
-    total=sum(item["price"] * item["quantity"] for item in cart if "item" in item)
+
     while True:
         # Show menu options
         choice = buttonbox("What would you like to do?", "Shopping Cart",
@@ -242,7 +242,8 @@ def main():
             remove_item(cart)
         elif choice == "\U0001F4B8 Checkout":
             if cart:
-                if total>10:
+                total = sum([item["price"] * item["quantity"] for item in cart])
+                if total>=10:
                     ask_for_coupon(cart, coupons_applied)
                     display_cart(cart,coupons_applied)
                     continue
