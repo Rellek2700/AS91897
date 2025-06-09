@@ -109,18 +109,16 @@ def remove_item(cart):
     # Process removal logic
     for item in cart:
         if item["item"] == del_item:
-            try:
-                del_quant = int(enterbox(f"Enter quantity to remove from {del_item} (in cart: {item['quantity']}):"))
-                if del_quant <= 0:
-                    raise ValueError
-                if del_quant < item["quantity"]:
-                    item["quantity"] -= del_quant
-                    msgbox(f"Removed {del_quant} x {del_item} from cart.")
-                else:
-                    cart.pop(item)
-                    msgbox(f"Removed all of {del_item} from cart.")
-            except ValueError as e:
-                msgbox(f"Invalid quantity entered: {e}")
+
+            del_quant = int(enterbox(f"Enter quantity to remove from {del_item} (in cart: {item['quantity']}):"))
+            if del_quant <= 0 or del_quant>item["quantity"]: #if item quantity is 0 or bigger than amount of item in cart, say invalid quantity
+                msgbox(f"Invalid quantity entered: {del_quant}")
+            if del_quant < item["quantity"]: #if item quantity is smaller than items in cart, remove item quantity
+                item["quantity"] -= del_quant
+                msgbox(f"Removed {del_quant} x {del_item} from cart.")
+            else: #if item quantity = amount of items remove item completely
+                del(cart[item])
+                msgbox(f"Removed all of {del_item} from cart.")
             return
 
 
