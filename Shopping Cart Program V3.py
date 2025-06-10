@@ -244,7 +244,8 @@ def main():
                 if total>=10:
                     ask_for_coupon(cart, coupons_applied)
                     display_cart(cart,coupons_applied)
-                    continue
+                    msgbox("Thank you for shopping with us!")
+                    break
                 else:
                     display_cart_less10(cart)
             msgbox("Thank you for shopping with us!")
