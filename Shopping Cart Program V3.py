@@ -31,7 +31,7 @@ def add_item(cart):
         if quantity <= 0:
             raise ValueError  # Reject non-positive quantities
         price = ITEMS[item]
-        total_price = price * quantity
+        totalp = price * quantity
         # Check if item is already in cart and update its quantity
         for i in cart:
             if i["item"] == item:
@@ -40,12 +40,12 @@ def add_item(cart):
         else:
             # Add new item to cart
             cart.append({"item": item, "price": price, "quantity": quantity})
-        msgbox(f"Added {quantity} x {item} @ ${price:.2f} = ${total_price:.2f} to cart.")
+        msgbox(f"Added {quantity} x {item} @ ${price:.2f} = ${totalp:.2f} to cart.")
     except ValueError as e:
         msgbox(f"Invalid quantity entered: {e} Please enter a whole number.")
 
 # Function to display the current contents of the cart
-def display_cart(cart, coupons_applied):
+def display_cart(cart, applied_coupons):
     if not cart:
         msgbox("Your cart is empty.")
         return
@@ -53,13 +53,13 @@ def display_cart(cart, coupons_applied):
     total = 0
     # Build a string showing each item, quantity, and cost
     for item in cart:
-        item_total = item["price"] * item["quantity"]
-        total += item_total
-        message += f"{item['quantity']} x {item['item']} @ ${item['price']:.2f} = ${item_total:.2f}\n"
+        total_items = item["price"] * item["quantity"]
+        total += total_items
+        message += f"{item['quantity']} x {item['item']} @ ${item['price']:.2f} = ${total_items:.2f}\n"
         # Apply any coupons if available
-    if coupons_applied:
+    if applied_coupons:
         message += "\nApplied Coupons:\n"
-        for coupon in coupons_applied:
+        for coupon in applied_coupons:
             if coupon in COUPONS:
                 coupon_info = COUPONS[coupon]
                 if coupon_info["type"] == "percent":
@@ -103,26 +103,26 @@ def remove_item(cart):
         msgbox("Your cart is empty.")
         return
     # Let user choose which item to remove from the cart
-    delete_item = choicebox("Select item to remove:", "Remove Item", list(ITEMS.keys())) #needs list() to work properly
-    if not delete_item:
+    delete_article = choicebox("Select item to remove:", "Remove Item", list(ITEMS.keys())) #needs list() to work properly
+    if not delete_article:
         return
     # Process removal logic
     for item in cart:
-        if item["item"] == delete_item:
+        if item["item"] == delete_article:
 
-            del_quant = int(enterbox(f"Enter quantity to remove from {delete_item} (in cart: {item['quantity']}):"))
+            del_quant = int(enterbox(f"Enter quantity to remove from {delete_article} (in cart: {item['quantity']}):"))
             if del_quant <= 0 or del_quant>item["quantity"]: #if item quantity is 0 or bigger than amount of item in cart, say invalid quantity
                 msgbox(f"Invalid quantity entered: {del_quant}")
             if del_quant < item["quantity"]: #if item quantity is smaller than items in cart, remove item quantity
                 item["quantity"] -= del_quant
-                msgbox(f"Removed {del_quant} x {delete_item} from cart.")
+                msgbox(f"Removed {del_quant} x {delete_article} from cart.")
             else: #if item quantity = amount of items remove item completely
                 del(cart[item])
-                msgbox(f"Removed all of {delete_item} from cart.")
+                msgbox(f"Removed all of {delete_article} from cart.")
             return
 
 
-def ask_for_coupon(cart, coupons_applied):
+def ask_for_coupon(cart, applied_coupons):
     """
     Function to apply a coupon code to the shopping cart
 
@@ -133,35 +133,35 @@ def ask_for_coupon(cart, coupons_applied):
     if total<0:
         msgbox(f"Your cart total is ${total:.2f}. You need at least $10 to use a coupon.")
 
-    coupon_code = enterbox("Enter your coupon code (or leave blank to skip):", "Apply Coupon")
-    if not coupon_code:
+    ccode = enterbox("Enter your coupon code (or leave blank to skip):", "Apply Coupon")
+    if not ccode:
         return  # User chose not to apply a coupon
-    coupon = COUPONS.get(coupon_code)
+    coupon = COUPONS.get(ccode)
     if not coupon:
         msgbox("Invalid coupon code.")
         return
     # Store the applied coupon in the cart for later reference
 
-    if coupon_code in coupons_applied:
-        msgbox(f"Coupon {coupon_code} has already been applied.")
+    if ccode in applied_coupons:
+        msgbox(f"Coupon {ccode} has already been applied.")
         return
 
-    coupons_applied.append(coupon_code)
+    applied_coupons.append(ccode)
 
     # Calculate the total price of items in the cart
 
     if coupon["type"] == "percent":
         discount = total * coupon["value"]
         total -= discount
-        msgbox(f"Applied {coupon_code}: {coupon['value'] * 100:.0f}% off! New total: ${total:.2f}")
+        msgbox(f"Applied {ccode}: {coupon['value'] * 100:.0f}% off! New total: ${total:.2f}")
     elif coupon["type"] == "dollar":
         total -= coupon["value"]
-        msgbox(f"Applied {coupon_code}: ${coupon['value']:.2f} off! New total: ${total:.2f}")
+        msgbox(f"Applied {ccode}: ${coupon['value']:.2f} off! New total: ${total:.2f}")
 
 
     more_coupons = ynbox("Do you have more coupons to apply?", "More Coupons", choices=["Yes", "No"])
     if more_coupons:
-        ask_for_coupon(cart, coupons_applied)
+        ask_for_coupon(cart, applied_coupons)
 
 
 def edit_or_remove_item(items): #function that is run to edit or remove an item from the dictionary ITEM
@@ -220,7 +220,7 @@ def admin_choice():
 # Main menu loop
 def main(): #main loop
     cart = []  # Start with an empty shopping cart
-    coupons_applied = []  # List to store applied coupons
+    applied_coupons = []  # List to store applied coupons
 
     while True:
         # Show menu options
@@ -234,16 +234,16 @@ def main(): #main loop
         if choice == "\u2795 Add Item":
             add_item(cart)
         elif choice == "\U0001F6D2 View Cart":
-            display_cart(cart, coupons_applied)
+            display_cart(cart, applied_coupons)
         elif choice == "\u274C Remove Item":
-            display_cart(cart, coupons_applied)
+            display_cart(cart, applied_coupons)
             remove_item(cart)
         elif choice == "\U0001F4B8 Checkout":
             if cart:
                 alles = sum([item["price"] * item["quantity"] for item in cart])
                 if alles>=10:
-                    display_cart(cart,coupons_applied)
-                    ask_for_coupon(cart, coupons_applied)
+                    display_cart(cart,applied_coupons)
+                    ask_for_coupon(cart, applied_coupons)
                     msgbox("Thank you for shopping with us!")
                     break
                 if alles<10:
@@ -252,15 +252,15 @@ def main(): #main loop
                     break
         elif choice == "\U0001F3EA Store Login":
             # Simple password check to allow admin access
-            entered_password = passwordbox("Enter Store Password")
-            if entered_password is None:
+            inputpassw = passwordbox("Enter Store Password")
+            if inputpassw is None:
                 continue
             try:
-                entered_password = int(entered_password)
+                inputpassw = int(inputpassw)
             except (ValueError, TypeError):
                 msgbox("Invalid password format.")
                 continue
-            if entered_password == 80085:
+            if inputpassw == 80085:
                 admin_choice()
             else:
                 msgbox("Wrong password")
