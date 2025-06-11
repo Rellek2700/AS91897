@@ -260,7 +260,7 @@ def main(): #main loop
             except (ValueError, TypeError):
                 msgbox("Invalid password format.")
                 continue
-            if inputpassw == 80085:
+            if inputpassw == 91897:
                 admin_choice()
             else:
                 msgbox("Wrong password")

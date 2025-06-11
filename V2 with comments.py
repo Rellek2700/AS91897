@@ -87,7 +87,7 @@ def main():
     while True:
         # Show menu options
         choice = buttonbox("What would you like to do?", "Shopping Cart",
-                           choices=["\U+2795 Add Item", "\U+1F6D2 View Cart", "\U+274C Remove Item", "\U+1F4B8 Checkout", "\U+1F3EA Store Login", "\U+1F6AE Quit"]) #U+2796 (minus)
+                           choices=["Add Item", "View Cart", "Remove Item", "Checkout", "Store Login", "Quit"]) #U+2796 (minus)
 
         if choice == "Add Item":
             add_item(cart)
