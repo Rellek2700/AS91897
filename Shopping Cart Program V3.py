@@ -22,7 +22,7 @@ def add_item(cart):
     """
     # Present the user with a list of items to choose from
     choices = list(ITEMS.keys())
-    item = choicebox("Select an item to add: \nApple $0.50 \nBanana $0.30 \nMilk $1.20", "Add Item", choices)
+    item = choicebox("Select an item to add:" , "Add Item", choices)
     if not item:
         return  # Exit if user cancels
     try:
